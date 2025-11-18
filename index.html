@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Petition – End Welcome to Country</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f7f7f7;
+        margin: 0;
+        padding: 0;
+    }
+
+    header {
+        background: #003366;
+        color: white;
+        padding: 20px;
+        text-align: center;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    input, button {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+
+    button {
+        background: #003366;
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #00264d;
+    }
+
+    .counter-box {
+        background: #e6f0ff;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .goal {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .count {
+        font-size: 40px;
+        font-weight: bold;
+        color: #003366;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Petition to End Welcome to Country</h1>
+</header>
+
+<div class="container">
+
+    <div class="counter-box">
+        <div class="goal">Goal: <span id="goal">10,000</span> Signatures</div>
+        <div class="count" id="count">0</div>
+    </div>
+
+    <h2>Sign the Petition</h2>
+
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="text" id="address" placeholder="Address" required>
+    <input type="email" id="email" placeholder="Email" required>
+
+    <button onclick="submitForm()">Sign Petition</button>
+
+    <p id="msg" style="color: green; font-weight: bold;"></p>
+</div>
+
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<script>
+    // ✔ Your Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyD3e4so2tnJG3Np7M0l42xWGcR1ypH0-xo",
+      authDomain: "apexfishing-359bf.firebaseapp.com",
+      databaseURL: "https://apexfishing-359bf-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "apexfishing-359bf",
+      storageBucket: "apexfishing-359bf.firebasestorage.app",
+      messagingSenderId: "575318234941",
+      appId: "1:575318234941:web:aac56fc9b23adc74f91754",
+      measurementId: "G-P7XNZ4L6LX"
+    };
+
+    // Initialise Firebase (compat version)
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const signaturesRef = db.ref("signatures");
+
+    // Live count
+    signaturesRef.on("value", snapshot => {
+        let count = snapshot.numChildren();
+        document.getElementById("count").innerText = count.toLocaleString();
+    });
+
+    // Submit form
+    function submitForm() {
+        let name = document.getElementById("name").value;
+        let address = document.getElementById("address").value;
+        let email = document.getElementById("email").value;
+
+        if (!name || !address || !email) {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        let newEntry = signaturesRef.push();
+        newEntry.set({
+            name: name,
+            address: address,
+            email: email,
+            timestamp: Date.now()
+        });
+
+        document.getElementById("msg").innerText = "Thank you for signing!";
+        document.getElementById("name").value = "";
+        document.getElementById("address").value = "";
+        document.getElementById("email").value = "";
+    }
+</script>
+
+</body>
+</html>
